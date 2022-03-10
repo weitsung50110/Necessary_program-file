@@ -5,9 +5,26 @@ from os import listdir, getcwd
 from os.path import join
 
 
-#file = open('image/2022train.txt', 'w')
 
-for i in range(2):
-    if("00001_"+str(i))
-    with open("00001_"+str(i), 'w') as f:
-        f.write("0 0.501953 0.500885 0.996094 0.998230")
+#把00001 ~ 00009的檔案轉成.txt
+'''
+
+for i in range(10):
+    for j in range(200000):
+        result = os.path.isfile("0000"+str(i+1)+"_"+str(j)+".jpg")
+        #print(result)
+        if(result==True):
+            with open("000/0000"+str(i+1)+"_"+str(j)+".txt", 'w') as f:
+                f.write(str(i)+" 0.501953 0.500885 0.996094 0.998230")
+                print(str(i)+" 0.501953 0.500885 0.996094 0.998230" + "000/0000"+str(i+1)+"_"+str(j)+".txt")
+'''
+
+#把00010 ~ 00099的檔案轉成.txt
+for i in range(55,100):
+    for j in range(200000):
+        result = os.path.isfile("000"+str(i+1)+"_"+str(j)+".jpg")
+        #print(result)
+        if(result==True):
+            with open("000/000"+str(i+1)+"_"+str(j)+".txt", 'w') as f:
+                f.write(str(i)+" 0.501953 0.500885 0.996094 0.998230")
+                print(str(i)+" 0.501953 0.500885 0.996094 0.998230" + "000/0000"+str(i+1)+"_"+str(j)+".txt")
