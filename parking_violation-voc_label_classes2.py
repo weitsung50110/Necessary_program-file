@@ -14,6 +14,8 @@ sets=[('2021', 'train')]
 #classes = ["screw","corner",".","0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","J","K","L","M","N","P","Q","R","S","T","U","V","W","X","Y","Z"]
 #classes = ["Leave_Car","Enter_Car","Plate","Car"]
 classes = ["Parking_Violation", "lpr"]
+#classes = ["car", "scooter","lpr"]
+
 
 def convert(size, box):
     print(image_id)
@@ -30,8 +32,8 @@ def convert(size, box):
     return (x,y,w,h)
 
 def convert_annotation(year, image_id):
-    in_file = open('parking_violation/datasets/label/%s.xml'%(image_id))
-    out_file = open('parking_violation/datasets/labels/%s.txt'%(image_id), 'w')
+    in_file = open('parking_violation/datasets/label/%s.xml'%(image_id)) #原本label的資料夾
+    out_file = open('parking_violation/datasets/labels/%s.txt'%(image_id), 'w') #要輸出成yolo的資料夾
     tree=ET.parse(in_file)
     root = tree.getroot()
     size = root.find('size')
@@ -53,8 +55,8 @@ wd = getcwd()
 
 for year, image_set in sets:
     if not os.path.exists('parking_violation/datasets/labels/'):
-        os.makedirs('parking_violation/datasets/labels/')
-    image_ids = open('parking_violation/datasets/2021train.txt').read().strip().split()
+        os.makedirs('parking_violation/datasets/labels/') #有多少張圖片, 存圖片名字的.txt, 是藉由produce_txt產生的
+    image_ids = open('parking_violation/datasets/2021train.txt').read().strip().split() #%(image_set)>>代表 第9行的 'train', 並且會把train帶到%s裡面, 所以出來的結果是train.txt
     list_file = open('%s.txt'%(image_set), 'w')
     for image_id in image_ids:
         list_file.write('%s/parking_violation/datasets/image/%s.jpg\n'%(wd,image_id))
