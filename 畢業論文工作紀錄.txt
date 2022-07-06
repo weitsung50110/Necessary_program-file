@@ -1,0 +1,78 @@
+2022/07/02
+1. produce_txt.py >> 產生2022train.txt, 裡面放著所有.jpg的檔案名字.
+2. transfer_xml_yolo_parking_violation.py, 藉由2022train.txt產生train.txt, 並產生所有的yolo標註檔案
+
+2022/07/05
+
+1. 創了D: 最新資料集 裡面放了最新整理好的文件
+
+2. D:\最新資料集\違規停車\train 裡面的圖片, 768~782 的15張圖片是大寫.JPG  把他們轉成小寫.jpg
+這樣在算anchors時, 產生的.txt才不會沒偵測到大寫的.JPG
+
+
+3. ./darknet detector calc_anchors data/graduation/parking_violation_train.data -num_of_clusters 12 -width 1280 -height 1280
+
+parking_violation_train違規停車計算anchors>>
+
+68, 67, 103,117, 150,188, 173,328, 254,422, 298,584, 423,442, 402,697, 736,547, 557,837, 742,984, 944,1169
+
+結果 :
+   299/299     5.26G  0.008863  0.004204 0.0003057   0.01337         1      1280    0.7703         1    0.9905    0.9392  0.005857  0.003522 0.0001952
+			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
+
+
+2022/07/06
+----------------------------------------------------------
+再使用下面的anchors, 並且更改anchors在yolor_p6_parking_violation2.cfg進行訓練, 看哪個跑出來的模型比較好!!
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/parking_violation_train.yaml --cfg cfg/graduation/yolor_p6_parking_violation2.cfg --weights '' --device 0,1,2 --sync-bn --name parking_violation --hyp hyp.scratch.1280.yaml
+
+
+ num_of_clusters = 12, width = 1280, height = 1280
+ read labels from 782 images
+ loaded          image: 782      box: 1773
+ all loaded.
+
+ calculating k-means++ ...
+
+ iterations = 57
+
+
+counters_per_class = 894, 879
+
+ avg IoU = 78.06 %
+
+Saving anchors to the file: anchors.txt
+anchors =  59, 59,  83, 98, 131, 67, 119,142, 144,227, 221,216, 194,376, 286,506, 511,432, 384,680, 621,765, 826,1103
+
+
+
+2022/07/05
+4.執行訓練 parking_violation_train
+
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/parking_violation_train.yaml --cfg cfg/graduation/yolor_p6_parking_violation.cfg --weights '' --device 0,1,2 --sync-bn --name parking_violation --hyp hyp.scratch.1280.yaml
+
+
+
+5. outdoor室外馬路場景計算anchors>>
+
+ ./darknet detector calc_anchors data/graduation/outdoor_train_all.data -num_of_clusters 12 -width 1280 -height 1280
+
+計算anchors>>
+
+
+ num_of_clusters = 12, width = 1280, height = 1280
+ read labels from 2529 images
+ loaded          image: 2529     box: 13303
+ all loaded.
+
+ calculating k-means++ ...
+
+ iterations = 81
+
+
+counters_per_class = 942, 6212, 6149
+
+ avg IoU = 77.92 %
+
+Saving anchors to the file: anchors.txt
+anchors =  58, 75,  85,123, 131,169,  95,357, 182,254, 141,478, 262,376, 214,567, 394,485, 326,673, 492,702, 767,950
