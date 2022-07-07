@@ -10,6 +10,7 @@
 這樣在算anchors時, 產生的.txt才不會沒偵測到大寫的.JPG
 
 
+<因為yolor要求anchors長度必須為12, 和yolov4不同 因此-num_of_clusters 12要設定成12>
 3. ./darknet detector calc_anchors data/graduation/parking_violation_train.data -num_of_clusters 12 -width 1280 -height 1280
 
 parking_violation_train違規停車計算anchors>>
@@ -21,8 +22,10 @@ parking_violation_train違規停車計算anchors>>
 			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
 
 
+
 2022/07/06
 ----------------------------------------------------------
+##跑出來結果比較差##
 再使用下面的anchors, 並且更改anchors在yolor_p6_parking_violation2.cfg進行訓練, 看哪個跑出來的模型比較好!!
 python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/parking_violation_train.yaml --cfg cfg/graduation/yolor_p6_parking_violation2.cfg --weights '' --device 0,1,2 --sync-bn --name parking_violation --hyp hyp.scratch.1280.yaml
 
@@ -42,8 +45,40 @@ counters_per_class = 894, 879
  avg IoU = 78.06 %
 
 Saving anchors to the file: anchors.txt
+
+
+##跑出來結果比較差##
 anchors =  59, 59,  83, 98, 131, 67, 119,142, 144,227, 221,216, 194,376, 286,506, 511,432, 384,680, 621,765, 826,1103
 
+   299/299     5.26G    0.0103   0.00436 0.0005968   0.01525         1      1280    0.7053         1    0.9585    0.9127  0.006984   0.00409 0.0004404
+			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
+
+-------------------------------------------------
+##跑出來結果最好##
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/parking_violation_train.yaml --cfg cfg/graduation/yolor_p6_parking_violation2.cfg --weights '' --device 0,1,2 --sync-bn --name parking_violation --hyp hyp.scratch.1280.yaml
+ num_of_clusters = 12, width = 1280, height = 1280
+ read labels from 782 images
+ loaded          image: 782      box: 1773
+ all loaded.
+
+ calculating k-means++ ...
+
+ iterations = 44
+
+
+counters_per_class = 894, 879
+
+ avg IoU = 78.19 %
+
+Saving anchors to the file: anchors.txt
+anchors =  60,59,  85,101, 131,67, 118,158, 175,192, 171,332, 261,417, 301,576, 535,443, 400,691, 584,806, 844,1038
+
+##跑出來結果最好##
+   298/299     5.26G  0.009309  0.004407 0.0006495   0.01437         4      1280    0.8147         1    0.9945    0.9536  0.006281  0.003081 0.0004204
+   299/299     5.26G  0.009279  0.003945 0.0005271   0.01375         1      1280    0.8042         1    0.9941     0.952  0.006409  0.003131 0.0004072
+			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
+
+存在parking_violation3裡面, 跑出來準確度最好.
 
 
 2022/07/05
@@ -75,4 +110,111 @@ counters_per_class = 942, 6212, 6149
  avg IoU = 77.92 %
 
 Saving anchors to the file: anchors.txt
-anchors =  58, 75,  85,123, 131,169,  95,357, 182,254, 141,478, 262,376, 214,567, 394,485, 326,673, 492,702, 767,950
+anchors =  58,75 , 85,123, 131,169, 95,357, 182,254, 141,478, 262,376, 214,567, 394,485, 326,673, 492,702, 767,950
+
+
+
+2022/07/06
+1. 把outdoor室外馬路場景計算anchors 改好了.cfg檔案, 以及 .yaml和.names檔案都更改完成
+之後可以直接訓練了
+
+
+2. 車牌辨識資料集lpr_38_train_all計算anchors>>
+
+ ./darknet detector calc_anchors data/graduation/lpr_38_train_all.data -num_of_clusters 12 -width 1280 -height 1280
+
+計算anchors>>
+ num_of_clusters = 12, width = 1280, height = 1280
+ read labels from 2178 images
+ loaded          image: 2178     box: 25914
+ all loaded.
+
+ calculating k-means++ ...
+
+ iterations = 27
+
+
+counters_per_class = 3153, 6702, 2090, 955, 789, 930, 877, 84, 909, 864, 953, 1044, 825, 625, 313, 288, 247, 287, 205, 258, 253, 8, 239, 284, 160, 583, 337, 244, 138, 140, 154, 199, 132, 125, 138, 136, 129, 117
+
+ avg IoU = 88.76 %
+
+Saving anchors to the file: anchors.txt
+anchors =  61,112,  85,134, 114,141,  98,165, 122,184,  76,472, 121,385, 146,402, 133,479, 186,401, 154,485, 159,558
+
+可以多刷幾次, 挑一個IoU比較高的結果!!
+
+
+3. 車牌偵測四個角點資料集lp-4c_train_all計算anchors>>
+
+ ./darknet detector calc_anchors data/graduation/lp-4c_train_all.data -num_of_clusters 12 -width 1280 -height 1280
+
+計算anchors>>
+
+ num_of_clusters = 12, width = 1280, height = 1280
+ read labels from 1000 images
+ loaded          image: 1000     box: 3998
+ all loaded.
+
+ calculating k-means++ ...
+
+ iterations = 72
+
+
+counters_per_class = 1000, 1000, 1000, 998
+
+ avg IoU = 93.49 %
+
+Saving anchors to the file: anchors.txt
+anchors = 137,186, 173,169, 163,195, 137,233, 151,220, 172,219, 193,204, 166,243, 153,268, 190,240, 187,267, 231,235
+
+
+可以多刷幾次, 挑一個IoU比較高的結果!!
+
+
+
+
+2022/07/07
+1.執行訓練 outdoor_train
+
+anchors =  58,75 , 85,123, 131,169, 95,357, 182,254, 141,478, 262,376, 214,567, 394,485, 326,673, 492,702, 767,950
+
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/outdoor_train.yaml --cfg cfg/graduation/yolor_p6_outdoor.cfg --weights '' --device 0,1,2 --sync-bn --name outdoor_runs --hyp hyp.scratch.1280.yaml
+
+   299/299     5.26G  0.008296  0.007051 0.0008291   0.01618         4      1280    0.7764    0.9994    0.9937    0.9658  0.005984    0.0061 0.0006205
+			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
+
+
+2. 執行訓練 lpr_38_train_all
+
+anchors =  61,112,  85,134, 114,141,  98,165, 122,184,  76,472, 121,385, 146,402, 133,479, 186,401, 154,485, 159,558
+
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/lpr_38_train_all.yaml --cfg cfg/graduation/yolor_p6_lpr_38.cfg --weights '' --device 0,1,2 --sync-bn --name lpr_38_runs --hyp hyp.scratch.1280.yaml
+
+
+3. 車牌偵測四個角點資料集lp-4c_train_all 的data >> .yaml .name設定完成 & yolor_p6_lp-4c.cfg設定完成
+
+anchors = 137,186, 173,169, 163,195, 137,233, 151,220, 172,219, 193,204, 166,243, 153,268, 190,240, 187,267, 231,235
+
+之後可以開始訓練
+
+
+4. yolor_p6_parking_violation測試
+##記得.cfg  yolor_p6_parking_violation.cfg >>>> yolor_p6_parking_violation2.cfg 要改成2.cfg, 因為2.cfg跑出來的anchors 準確度(precision)比較高!!
+python test.py --data data/graduation/parking_violation_train.yaml --img 1280 --batch 32 --conf 0.4 --iou 0.65 --task test --device 3 --cfg cfg/graduation/yolor_p6_parking_violation2.cfg --weights runs/train/parking_violation3_runs/weights/best.pt --save-txt --verbose --name parking_violation3_test --names data/graduation/parking_violation_train.names
+
+
+
+               Class      Images     Targets           P           R      mAP@.5  mAP@.5:.95: 100%|█| 4
+                 all         118         269       0.851       0.782        0.85       0.706
+   Parking_Violation         118         150       0.886       0.673       0.807       0.645
+                 lpr         118         119       0.815       0.891       0.894       0.768
+
+
+---------------------------------------------
+python test.py --data data/graduation/parking_violation_train.yaml --img 1280 --batch 32 --conf 0.4 --iou 0.65 --task test --device 3 --cfg cfg/graduation/yolor_p6_parking_violation.cfg --weights runs/train/parking_violation_runs/weights/best.pt --save-txt --verbose --name parking_violation3_test --names data/graduation/parking_violation_train.names
+
+
+               Class      Images     Targets           P           R      mAP@.5  mAP@.5:.95: 100%|█| 4
+                 all         118         269       0.784       0.841       0.814       0.639
+   Parking_Violation         118         150       0.815       0.733       0.766        0.57
+                 lpr         118         119       0.753        0.95       0.863       0.707
