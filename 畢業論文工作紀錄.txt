@@ -8,6 +8,7 @@
 
 2. D:\最新資料集\違規停車\train 裡面的圖片, 768~782 的15張圖片是大寫.JPG  把他們轉成小寫.jpg
 這樣在算anchors時, 產生的.txt才不會沒偵測到大寫的.JPG
+(google drive裡面圖片也已更新)
 
 
 <因為yolor要求anchors長度必須為12, 和yolov4不同 因此-num_of_clusters 12要設定成12>
@@ -190,12 +191,15 @@ anchors =  61,112,  85,134, 114,141,  98,165, 122,184,  76,472, 121,385, 146,402
 
 python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/lpr_38_train_all.yaml --cfg cfg/graduation/yolor_p6_lpr_38.cfg --weights '' --device 0,1,2 --sync-bn --name lpr_38_runs --hyp hyp.scratch.1280.yaml
 
+   299/299     6.61G   0.01145   0.01906  0.003143   0.03366        27      1280    0.9545    0.9995    0.9949    0.9611  0.007343   0.01752 0.0001814
+			box	  obj	   cls	      total	targets	 img_size   Prescion   Recall	mAP@.5
+
 
 3. 車牌偵測四個角點資料集lp-4c_train_all 的data >> .yaml .name設定完成 & yolor_p6_lp-4c.cfg設定完成
 
 anchors = 137,186, 173,169, 163,195, 137,233, 151,220, 172,219, 193,204, 166,243, 153,268, 190,240, 187,267, 231,235
 
-之後可以開始訓練
+python -m torch.distributed.launch --nproc_per_node 3 --master_port 9527 train.py --batch-size 6 --img 1280 1280 --data graduation/lp-4c_train_all.yaml --cfg cfg/graduation/yolor_p6_lp-4c.cfg --weights '' --device 0,1,2 --sync-bn --name lp-4c_runs --hyp hyp.scratch.1280.yaml
 
 
 4. yolor_p6_parking_violation測試
@@ -218,3 +222,11 @@ python test.py --data data/graduation/parking_violation_train.yaml --img 1280 --
                  all         118         269       0.784       0.841       0.814       0.639
    Parking_Violation         118         150       0.815       0.733       0.766        0.57
                  lpr         118         119       0.753        0.95       0.863       0.707
+
+
+
+
+2022/07/08
+1. 學長測試文件
+python detector_outdoor_parking_violation.py -i 違規停車/test/image/ -c cfg/yolor_p6_parking_violation2.cfg -cl data/parking_violation_train.names -w runs/parking_violation3_runs/weights/best.pt -s 1 -o 地下違規停車測試結果 -thresh 0.9 -dont 1
+<在電腦上跑 失敗>
