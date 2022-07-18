@@ -28,7 +28,7 @@ def load_classes(path):
 
 def detect(save_img=False):
     out, source, weights, view_img, save_txt, imgsz, cfg, names = \
-        opt.output, opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, opt.cfg, opt.names
+        opt.output, opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, opt.cfg, opt.names   #呼叫argparse時 必須更改為opt
     webcam = source == '0' or source.startswith('rtsp') or source.startswith('http') or source.endswith('.txt')
 
     # Initialize
@@ -144,7 +144,7 @@ def detect(save_img=False):
                     #照片檔名 我存在字典dic['image_name']裡面
                     #file_name=os.path.split(path)[-1]
                     #儲存.csv位置
-                    save_csv_path = str(os.getcwd()) + '/' + 'inference' + '/' + 'parking_violation3_detect.csv'
+                    save_csv_path = str(os.getcwd()) + '/' + 'inference' + '/' + opt.csv_name #對應argparse
                     #print(save_csv_path)
                     '''
                     #這邊不會用到
@@ -187,11 +187,11 @@ def detect(save_img=False):
 
                     if save_img or view_img:  # Add bbox to image
                         label = '%s %.2f' % (names[int(cls)], conf)
-                        #print("\n"+"LABEL : "+label)
+                        #print("\n"+"LABEL : "+label) #產生lable標籤 + confidence置信度
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
 
-                    print(xywh) #預測出來的yolo標註點
-                    print('%.2f' % (conf)) #預測出來的conf
+                    #print(xywh) #預測出來的yolo標註點
+                    #print('%.2f' % (conf)) #預測出來的conf
                     #print("QQQQQQQQQQQQQQQQQQ")
 
             # Print time (inference + NMS)
@@ -245,7 +245,8 @@ if __name__ == '__main__':
     parser.add_argument('--update', action='store_true', help='update all models')
     parser.add_argument('--cfg', type=str, default='cfg/yolor_p6.cfg', help='*.cfg path')
     parser.add_argument('--names', type=str, default='data/coco.names', help='*.cfg path')
-    opt = parser.parse_args()
+    parser.add_argument('--csv_name', type=str, default='default.csv', help='*.csv name') #自己加的
+    opt = parser.parse_args()  #呼叫argparse時 必須更改為opt
     print(opt)
 
     with torch.no_grad():
